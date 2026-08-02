@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import streamlit as st
 import pandas as pd
 
@@ -24,13 +26,14 @@ st.set_page_config(
 # Load Data
 # ----------------------------------------------------
 
-DATA_DIR = "./final_datasets"
+BASE_DIR = Path(__file__).parent.resolve()
+DATA_DIR = BASE_DIR / "final_datasets"
 
 @st.cache_data
 def load_data():
 
-    team_stats = pd.read_csv(f"{DATA_DIR}/cfb_data.csv")
-    team_spending = pd.read_csv(f"{DATA_DIR}/conference_spending.csv")
+    team_stats = pd.read_csv(DATA_DIR / "cfb_data.csv")
+    team_spending = pd.read_csv(DATA_DIR / "conference_spending.csv")
 
     if "Unnamed: 0" in team_stats.columns:
         team_stats.drop(columns=["Unnamed: 0"], inplace=True)

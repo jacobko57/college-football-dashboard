@@ -2,13 +2,16 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
+from pathlib import Path
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-team_conference = pd.read_csv('./final_datasets/team_conference.csv')
-team_stats = pd.read_csv('./final_datasets/team_stats_clean.csv')
-team_spending = pd.read_csv('./final_datasets/all_school_fees.csv')
-conference_spending = pd.read_csv('./final_datasets/conference_spending.csv')
+BASE_DIR = Path(__file__).parent
+
+team_conference = pd.read_csv(BASE_DIR / "final_datasets" / "team_conference.csv")
+team_stats = pd.read_csv(BASE_DIR / "final_datasets" / "team_stats_clean.csv")
+team_spending = pd.read_csv(BASE_DIR / "final_datasets" / "all_school_fees.csv")
+conference_spending = pd.read_csv(BASE_DIR / "final_datasets" / "conference_spending.csv")
 
 team_stats["winning_percentage"] = team_stats["win"] / (team_stats["win"] + team_stats["loss"])
 

@@ -1,4 +1,4 @@
-
+from pathlib import Path
 from turtle import st
 
 import torch
@@ -9,9 +9,10 @@ import joblib
 import streamlit as st
 import plotly.graph_objects as go
 
-encoder = joblib.load("label_encoder.pkl")
+BASE_DIR = Path(__file__).parent.resolve()
+encoder = joblib.load(BASE_DIR / "label_encoder.pkl")
 
-team_stats_clean = pd.read_csv('./final_datasets/team_stats_clean.csv')
+team_stats_clean = pd.read_csv(BASE_DIR / "final_datasets" / "team_stats_clean.csv")
 
 feature_columns = [
     c for c in team_stats_clean.columns
@@ -106,7 +107,7 @@ model = FootballLSTM(
     ).to(device)
 
 model.load_state_dict(
-    torch.load("best_football_lstm.pt", map_location=device)
+    torch.load("./best_football_lstm.pt", map_location=device)
 )
 
 model.to(device)

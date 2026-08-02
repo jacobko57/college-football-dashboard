@@ -1,0 +1,42 @@
+Sport,Team,Old limit,New limit,Increase Per team
+Baseball,M,11.7,34.0,22.3
+Basketball,M,13.0,15.0,2
+Fencing,M,4.5,24.0,19.5
+Football (FBS),M,85.0,105.0,20
+Golf,M,4.5,9.0,4.5
+Gymnastics,M,6.3,20.0,13.7
+Hockey,M,18.0,26.0,8
+Lacrosse,M,12.6,48.0,35.4
+Skiing,M,6.3,16.0,9.7
+Soccer,M,9.9,28.0,18.1
+Swimming,M,9.9,30.0,20.1
+Tennis,M,4.5,10.0,5.5
+Track / X-C,M,12.6,62.0,49.4
+Volleyball,M,4.5,18.0,13.5
+Water polo,M,4.5,24.0,19.5
+Wrestling,M,9.9,30.0,20.1
+Basketball,W,15.0,15.0,-
+Beach volleyball,W,6.0,19.0,13
+Bowling,W,5.0,11.0,6
+Equestrian,W,15.0,50.0,35
+Fencing,W,5.0,24.0,19
+Field hockey,W,12.0,27.0,15
+Golf,W,6.0,9.0,3
+Gymnastics,W,12.0,20.0,8
+Hockey,W,18.0,26.0,8
+Lacrosse,W,12.0,38.0,26
+Rowing,W,20.0,68.0,48
+Rugby,W,12.0,36.0,24
+Skiing,W,7.0,16.0,9
+Soccer,W,14.0,28.0,14
+Softball,W,12.0,25.0,13
+Swimming,W,14.0,30.0,16
+Tennis,W,8.0,10.0,2
+Track / X-C,W,18.0,62.0,44
+Triathlon,W,6.5,14.0,7.5
+Acrobatics,W,14.0,55.0,41
+Volleyball,W,12.0,18.0,6
+Water polo,W,8.0,24.0,16
+Wrestling,W,10.0,30.0,20
+Rifle,Mix,3.6,12.0,8.4
+Stunt,Mix,14.0,65.0,51

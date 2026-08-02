@@ -9,7 +9,7 @@ import joblib
 import streamlit as st
 import plotly.graph_objects as go
 
-encoder = joblib.load("../label_encoder.pkl")
+encoder = joblib.load("label_encoder.pkl")
 
 team_stats_clean = pd.read_csv('../final_datasets/team_stats_clean.csv')
 
@@ -106,7 +106,7 @@ model = FootballLSTM(
     ).to(device)
 
 model.load_state_dict(
-    torch.load("../best_football_lstm.pt", map_location=device)
+    torch.load("best_football_lstm.pt", map_location=device)
 )
 
 model.to(device)

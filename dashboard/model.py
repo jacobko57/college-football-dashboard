@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 encoder = joblib.load("label_encoder.pkl")
 
-team_stats_clean = pd.read_csv('../final_datasets/team_stats_clean.csv')
+team_stats_clean = pd.read_csv('./final_datasets/team_stats_clean.csv')
 
 feature_columns = [
     c for c in team_stats_clean.columns

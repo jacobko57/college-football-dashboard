@@ -24,7 +24,7 @@ st.set_page_config(
 # Load Data
 # ----------------------------------------------------
 
-DATA_DIR = "../final_datasets"
+DATA_DIR = "./final_datasets"
 
 @st.cache_data
 def load_data():

@@ -107,7 +107,7 @@ model = FootballLSTM(
     ).to(device)
 
 model.load_state_dict(
-    torch.load("./best_football_lstm.pt", map_location=device)
+    torch.load(BASE_DIR / "best_football_lstm.pt", map_location=device)
 )
 
 model.to(device)

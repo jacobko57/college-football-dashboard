@@ -9,6 +9,7 @@ from plots import (
     plot_top_n_highest_pct,
     plot_nil_spending_vs,
     plot_avg_spending_by_conf,
+    plot_big_ten_spending_vs_wins
 )
 
 # ----------------------------------------------------
@@ -150,9 +151,10 @@ The dashboard is organized around three questions:
 # Tabs
 # ----------------------------------------------------
 
-story_tab, team_tab, forecast_tab = st.tabs(
+story_tab, big_ten_tab, team_tab, forecast_tab = st.tabs(
     [
         "📖 NIL Story",
+        "🏈 Big Ten Comparison",
         "🏈 Team Analysis",
         "🔮 Future Outlook"
     ]
@@ -244,6 +246,46 @@ create new ones.
         st.dataframe(
             filtered_df,
             use_container_width=True
+        )
+
+
+with big_ten_tab:
+
+    st.header("Big Ten: NIL Spending and Team Performance")
+
+    left, right = st.columns([2, 1])
+
+    with left:
+
+        plot_big_ten_spending_vs_wins()
+
+    with right:
+
+        st.success(
+            """
+### Key Question
+
+Does greater NIL spending translate into better on-field performance?
+
+This visualization compares **Big Ten NIL spending** with several team
+performance metrics from the most recent season.
+
+- Teams farther to the right spend more on NIL.
+- Higher values on the y-axis indicate stronger performance.
+- The regression line summarizes the overall trend.
+- A positive slope suggests that teams with larger NIL budgets tend to
+  perform better.
+
+**Takeaway**
+
+Across the Big Ten, there is a **positive association** between NIL
+spending and football success. Programs investing more resources into
+player acquisition generally achieve higher winning percentages.
+
+> **Important:** This figure demonstrates **correlation**, not
+> causation. Successful programs often have advantages beyond NIL
+> spending, including coaching, facilities, and recruiting pipelines
+"""
         )
 
 ########################################################

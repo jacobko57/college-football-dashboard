@@ -521,3 +521,120 @@ def plot_avg_spending_by_conf(
         fig,
         use_container_width=True
     )
+
+# Plot scatter plot of Big Ten winning percentage vs. spending
+def plot_big_ten_spending_vs_wins(
+    team_stats=team_stats,
+    team_spending=team_spending,
+):
+    """
+    Displays the relationship between NIL spending and
+    winning percentage for Big Ten football teams.
+    """
+
+    # ----------------------------------------
+    # Most recent season
+    # ----------------------------------------
+    latest_year = team_stats["year"].max()
+
+    recent_stats = (
+        team_stats[team_stats["year"] == latest_year]
+        .copy()
+    )
+
+    # ----------------------------------------
+    # Merge data
+    # ----------------------------------------
+    merged_df = pd.merge(
+        team_spending,
+        recent_stats,
+        left_on="School",
+        right_on="team",
+        how="inner"
+    )
+
+    # ----------------------------------------
+    # Winning %
+    # ----------------------------------------
+    merged_df["winning_percentage"] = (
+        merged_df["win"] /
+        (merged_df["win"] + merged_df["loss"])
+    )
+
+    # ----------------------------------------
+    # Keep only Big Ten
+    # ----------------------------------------
+    merged_df = merged_df[
+        merged_df["Conference"] == "Big Ten"
+    ].copy()
+
+    # ----------------------------------------
+    # Correlation
+    # ----------------------------------------
+    corr = merged_df["Available 2026 ($)"].corr(
+        merged_df["winning_percentage"]
+    )
+
+    # ----------------------------------------
+    # Scatter plot
+    # ----------------------------------------
+    fig = px.scatter(
+        merged_df,
+        x="Available 2026 ($)",
+        y="winning_percentage",
+        trendline="ols",
+        color_discrete_sequence=["#1f77b4"],
+        hover_name="team",
+        hover_data={
+            "Available 2026 ($)": ":$,.0f",
+            "winning_percentage": ":.1%"
+        }
+    )
+
+    # ----------------------------------------
+    # Style
+    # ----------------------------------------
+    fig.update_traces(
+        textposition="top center",
+        marker=dict(
+            size=12,
+            opacity=0.8,
+            line=dict(
+                width=1,
+                color="white"
+            )
+        )
+    )
+
+    fig.update_layout(
+        template="plotly_white",
+        height=600,
+        title=(
+            f"Big Ten NIL Spending vs Winning Percentage"
+            f"<br><sup>Correlation = {corr:.2f}</sup>"
+        ),
+        xaxis_title="NIL Spending",
+        yaxis_title="Winning Percentage",
+        showlegend=False,
+        margin=dict(
+            l=40,
+            r=40,
+            t=80,
+            b=40
+        )
+    )
+
+    fig.update_xaxes(
+        showgrid=False,
+        showticklabels=False
+    )
+
+    fig.update_yaxes(
+        showgrid=False,
+        showticklabels=False
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )

@@ -638,3 +638,356 @@ def plot_big_ten_spending_vs_wins(
         fig,
         use_container_width=True
     )
+
+# Plot spending resources for all teams
+def plot_all_schools_awards_2025_vs_2026(
+    team_spending=team_spending,
+):
+    """
+    Compares each school's total 2025 awards with its
+    available NIL resources for 2026.
+
+    A log scale is used to make differences between schools
+    with very different resource levels easier to see.
+    """
+
+    # ----------------------------------------
+    # Prepare data
+    # ----------------------------------------
+    plot_df = team_spending[
+        [
+            "School",
+            "Conference",
+            "Total Value ($) 2025 Awards",
+            "Available 2026 ($)",
+            "% Increase",
+        ]
+    ].dropna().copy()
+
+    # Remove schools with zero/negative values because
+    # log scales cannot display them.
+    plot_df = plot_df[
+        (plot_df["Total Value ($) 2025 Awards"] > 0)
+        & (plot_df["Available 2026 ($)"] > 0)
+    ].copy()
+
+    # ----------------------------------------
+    # Scatter plot
+    # ----------------------------------------
+    fig = px.scatter(
+        plot_df,
+        x="Total Value ($) 2025 Awards",
+        y="Available 2026 ($)",
+        hover_name="School",
+        hover_data={
+            "Conference": True,
+            "Total Value ($) 2025 Awards": ":$,.0f",
+            "Available 2026 ($)": ":$,.0f",
+            "% Increase": ":.0f%",
+        },
+        color_discrete_sequence=["#1f77b4"],
+    )
+
+    # ----------------------------------------
+    # Style
+    # ----------------------------------------
+    fig.update_traces(
+        marker=dict(
+            size=11,
+            opacity=0.75,
+            line=dict(
+                width=1,
+                color="white",
+            ),
+        ),
+        selector=dict(mode="markers"),
+    )
+
+    fig.update_layout(
+        template="plotly_white",
+        height=650,
+        title=(
+            "School NIL Resources: 2025 vs 2026"
+            "<br><sup>"
+            "Schools farther toward the top-right have substantially more resources"
+            "</sup>"
+        ),
+        xaxis_title="Total Value of 2025 Awards",
+        yaxis_title="Available Resources in 2026",
+        showlegend=False,
+        margin=dict(
+            l=50,
+            r=40,
+            t=90,
+            b=50,
+        ),
+    )
+
+    # ----------------------------------------
+    # Log scales
+    # ----------------------------------------
+    fig.update_xaxes(
+        type="log",
+        showgrid=False,
+        showticklabels=False,
+    )
+
+    fig.update_yaxes(
+        type="log",
+        showgrid=False,
+        showticklabels=False,
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+    )
+
+# Plot winning percentages of all teams
+def plot_best_vs_worst_programs(
+    team_stats=team_stats,
+    n=10
+):
+    """
+    Displays the highest- and lowest-performing college football
+    programs based on average winning percentage.
+
+    Designed to emphasize the gap between elite and struggling
+    programs across the entire dataset.
+    """
+
+    # ------------------------------------------------
+    # Calculate average winning percentage
+    # ------------------------------------------------
+    average_winning_percent = (
+        team_stats
+        .groupby("team")["winning_percentage"]
+        .mean()
+        .reset_index()
+        .sort_values(
+            "winning_percentage",
+            ascending=False
+        )
+    )
+
+    # ------------------------------------------------
+    # Select top and bottom programs
+    # ------------------------------------------------
+    top_teams = (
+        average_winning_percent
+        .head(n)
+        .sort_values(
+            "winning_percentage",
+            ascending=False
+        )
+        .copy()
+    )
+
+    bottom_teams = (
+        average_winning_percent
+        .tail(n)
+        .sort_values(
+            "winning_percentage",
+            ascending=True
+        )
+        .copy()
+    )
+
+    # ------------------------------------------------
+    # Identify absolute highest / lowest
+    # ------------------------------------------------
+    highest_team = average_winning_percent.iloc[0]
+    lowest_team = average_winning_percent.iloc[-1]
+
+    # ------------------------------------------------
+    # Calculate gap
+    # ------------------------------------------------
+    gap = (
+        highest_team["winning_percentage"]
+        - lowest_team["winning_percentage"]
+    )
+
+    # ------------------------------------------------
+    # Colors
+    # ------------------------------------------------
+    top_colors = [
+        "#2ca02c"
+        if team == highest_team["team"]
+        else "#B0B0B0"
+        for team in top_teams["team"]
+    ]
+
+    bottom_colors = [
+        "#d62728"
+        if team == lowest_team["team"]
+        else "#B0B0B0"
+        for team in bottom_teams["team"]
+    ]
+
+    # ------------------------------------------------
+    # Labels
+    # Only highlight absolute highest / lowest
+    # ------------------------------------------------
+    top_text = [
+        (
+            f"<b>{team}</b><br>{pct:.1%}"
+            if team == highest_team["team"]
+            else f"<b>{team}</b>"
+        )
+        for team, pct in zip(
+            top_teams["team"],
+            top_teams["winning_percentage"]
+        )
+    ]
+
+    bottom_text = [
+        (
+            f"<b>{team}</b><br>{pct:.1%}"
+            if team == lowest_team["team"]
+            else f"<b>{team}</b>"
+        )
+        for team, pct in zip(
+            bottom_teams["team"],
+            bottom_teams["winning_percentage"]
+        )
+    ]
+
+    # ------------------------------------------------
+    # Create subplot layout
+    # ------------------------------------------------
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        column_widths=[0.5, 0.5],
+        horizontal_spacing=0.12,
+        subplot_titles=(
+            f"Top {n} Programs",
+            f"Bottom {n} Programs"
+        )
+    )
+
+    # ------------------------------------------------
+    # TOP PROGRAMS
+    # Highest → Lowest
+    # ------------------------------------------------
+    fig.add_trace(
+        go.Bar(
+            x=top_teams["winning_percentage"],
+            y=top_teams["team"],
+            orientation="h",
+            marker_color=top_colors,
+            text=top_text,
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Average Winning Percentage: %{x:.1%}"
+                "<extra></extra>"
+            )
+        ),
+        row=1,
+        col=1
+    )
+
+    # ------------------------------------------------
+    # BOTTOM PROGRAMS
+    # Lowest → Highest
+    # ------------------------------------------------
+    fig.add_trace(
+        go.Bar(
+            x=bottom_teams["winning_percentage"],
+            y=bottom_teams["team"],
+            orientation="h",
+            marker_color=bottom_colors,
+            text=bottom_text,
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Average Winning Percentage: %{x:.1%}"
+                "<extra></extra>"
+            )
+        ),
+        row=1,
+        col=2
+    )
+
+    # ------------------------------------------------
+    # Layout
+    # ------------------------------------------------
+    fig.update_layout(
+        template="plotly_white",
+        height=650,
+        showlegend=False,
+
+        title={
+            "text": (
+                "The Gap Between College Football's Best and Worst"
+                f"<br><sup>"
+                f"{highest_team['team']} leads at "
+                f"{highest_team['winning_percentage']:.1%}"
+                f" &nbsp;&nbsp;|&nbsp;&nbsp; "
+                f"{lowest_team['team']} trails at "
+                f"{lowest_team['winning_percentage']:.1%}"
+                f" &nbsp;&nbsp;|&nbsp;&nbsp; "
+                f"Gap: {gap:.1%} points"
+                f"</sup>"
+            ),
+            "x": 0.05
+        },
+
+        margin=dict(
+            l=20,
+            r=40,
+            t=110,
+            b=30
+        )
+    )
+
+    # ------------------------------------------------
+    # Y-axis ordering
+    # ------------------------------------------------
+    # Top: highest → lowest
+    fig.update_yaxes(
+        autorange="reversed",
+        showgrid=False,
+        showticklabels=False,
+        row=1,
+        col=1
+    )
+
+    # Bottom: lowest → highest
+    fig.update_yaxes(
+        autorange="reversed",
+        showgrid=False,
+        showticklabels=False,
+        row=1,
+        col=2
+    )
+
+    # ------------------------------------------------
+    # X-axis formatting
+    # ------------------------------------------------
+    fig.update_xaxes(
+        range=[0, 1],
+        showticklabels=False,
+        showgrid=False,
+        row=1,
+        col=1
+    )
+
+    fig.update_xaxes(
+        range=[0, 1],
+        showticklabels=False,
+        showgrid=False,
+        row=1,
+        col=2
+    )
+
+    # ------------------------------------------------
+    # Plot
+    # ------------------------------------------------
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )

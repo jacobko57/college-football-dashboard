@@ -9,7 +9,9 @@ from plots import (
     plot_top_n_highest_pct,
     plot_nil_spending_vs,
     plot_avg_spending_by_conf,
-    plot_big_ten_spending_vs_wins
+    plot_big_ten_spending_vs_wins,
+    plot_all_schools_awards_2025_vs_2026,
+    plot_best_vs_worst_programs
 )
 
 # ----------------------------------------------------
@@ -93,6 +95,8 @@ is associated with football success and whether increased financial investment
 is changing competitive balance across Division I football.
 
 Move from left to right through the dashboard to explore the story.
+
+Data Source: [NIL-NCAA](https://nil-ncaa.com/) and [College Team Statistics](https://www.kaggle.com/datasets/jeffgallini/college-football-team-stats-2019).
 """)
 
 # ----------------------------------------------------
@@ -151,14 +155,53 @@ The dashboard is organized around three questions:
 # Tabs
 # ----------------------------------------------------
 
-story_tab, big_ten_tab, team_tab, forecast_tab = st.tabs(
+intro_tab, story_tab, big_ten_tab, team_tab, forecast_tab = st.tabs(
     [
+        "📊 Introduction",
         "📖 NIL Story",
-        "🏈 Big Ten Comparison",
+        "🔟 Big Ten Comparison",
         "🏈 Team Analysis",
         "🔮 Future Outlook"
     ]
 )
+
+########################################################
+# INTRODUCTION TAB
+########################################################
+
+with intro_tab:
+
+    st.header("Introduction")
+
+    col1, col2 = st.columns([1,1])
+
+    with col1:
+        plot_all_schools_awards_2025_vs_2026()
+
+    with col2:
+        num_teams = st.number_input(
+            "Number of Teams",
+            min_value=1,
+            max_value=20,
+            value=10
+        )
+
+        plot_best_vs_worst_programs(n=num_teams)
+
+    st.success("""
+        **Key Insights**
+
+        The differences in both financial resources and on-field performance are substantial. 
+        Some programs have access to dramatically more NIL resources than others, 
+        while winning percentages likewise span a wide range across college football.
+
+        This raises the central question of this analysis: is there a relationship between NIL resources and winning?
+
+        The next visualization compares available NIL resources with winning percentage for individual programs. 
+        By examining the two measures together, we can move beyond simply identifying the teams with the most money or the 
+        best records and begin to assess whether financial resources are associated with competitive success.
+    """)
+    
 
 ########################################################
 # STORY TAB
@@ -248,6 +291,9 @@ create new ones.
             use_container_width=True
         )
 
+########################################################
+# BIG TEN TAB
+########################################################
 
 with big_ten_tab:
 
